@@ -1,0 +1,134 @@
+This is the readme for Common Music 3. 
+
+The CM source tree builds two different applications:
+
+Grace (Graphical Realtime Algorithmic Composition Environment) 
+   A drag-and-drop GUI with embedded Scheme interpreter (Sndlib/S7),
+   code editor, data plotter and realtime connections to various
+   packages such as MIDI, OSC, CLM, Csound, Fomus and SDIF.
+
+===============================
+== Building on Mac and Linux ==
+===============================
+
+Building from sources requires Premake 4.4-beta4 or higher to generate
+the make scripts. You can download Premake 4.4-beta4 or higher from:
+
+  http://industriousone.com/premake/download
+
+To build the basic Common Music from sources you do:
+
+   cd cm
+   premake4
+   make
+
+Make will automatically download and compile two source libraries:
+JUCE (C++ library) and Sndlib (audio library and Scheme
+interpreter). Sources will be downloaded via 'git' and 'curl',
+respectively. Alternatively you can download these packages by hand
+into cm/sndlib and cm/juce before you call make.
+
+Grace can also include these optional packages:
+
+       Fomus (music notation), 
+       Oscpack (OSC communication)
+       SDIF (Spectral Data Interchange Format).
+
+To include any of the optional packages you will add their install
+options to premake4.
+
+To build Grace with Oscpack add the --with-oscpack flag to premake4:
+
+    premake4 --with-oscpack
+
+The will cause the make process to automatically download oscpack
+sources (via 'svn') and include them in the build.
+
+To include either Fomus or SDIF you must first build and install these
+packages before building Grace. Then provide their install roots to
+the build script script using the --with-fomus= and --with-sdif=
+options, e.g.:
+
+    premake4 --with-fomus=/usr/local
+    premake4 --with-sdif=../SDIF-3.11.4/
+
+For more information about the premake4 build options do:
+
+    premake4 --help
+
+=========================
+== Building on Windows ==
+=========================
+
+To build CM on windows you will need to install:
+
+    Git bash (https://openhatch.org/missions/windows-setup/install-git-bash)
+    Visual Studio Express 2010 
+    premake 4.4-beta4 or higher (http://industriousone.com/premake/download)
+
+1. Start Git bash, change directories to your cm source directory and
+download juce and sndlib:.
+
+   cd /c/softare/cm
+   res/bin/sndlib.sh --nobuild
+   res/bin/juce.sh
+   res/bin/oscpack.sh
+
+These will download the projects into the directories cm/sndlib,
+cm/juce and (optionally) cm/oscpack. If you dont have curl, git or svn
+then you can download each package by hand and restore into the
+appropriate subdrectory.
+
+2. Create the sndlib library:
+
+  cd sndlib
+  premake4 vs2010 --with-g++
+
+In the Finder window double-click the resulting sndlib.sln file. This
+will open the sndlib project in VS2010. Once the project is open
+select Release in configuration pop up (it probably shows Debug) and
+then select Build Solution in the Build menu. This will create
+sndlib.lib.  Quit VS2010.
+
+3. In the Git bash terminal, cd back up to the cm source directory and
+make the Common Music project:
+   
+    premake4 
+or
+    premake4 --with-oscpack
+
+In the Finder window double-click the file Common Music.sln to open
+the project in VS2010. Select "Release" in the configuration pop-up
+menu. Select Build Solution in the Build menu. This will create
+bin/Grace.exe. Quit VS2010.
+
+Double-click the file bin/Grace.exe to start the app.
+
+=====================================================
+==== Building a static SDIF library from sources ====
+=====================================================
+
+  wget http://sourceforge.net/projects/sdif/files/sdif/SDIF-3.11.4/SDIF-3.11.4-src.zip
+  unzip SDIF-3.11.4-src.zip
+  mv SDIF-3.11.4-src SDIF-3.11.4
+  cd SDIF-3.11.4
+  ./configure --prefix=`pwd` --enable-shared=no --enable-pthreads=no
+  make
+  make install
+
+To build CM with sdif include the --with-sdif flag.
+
+================================================
+====  Installing JUCE dependancies on Linux ====
+================================================
+
+Go here to read about the full list of JUCE dependancies that you need
+to install (Ubuntu):
+
+   http://www.rawmaterialsoftware.com/viewtopic.php?f=5&t=6502&hilit=juce+linux+install
+
+To build sndlib with jack you will also need to install libsamplerate
+(Secret Rabbit Code):
+
+  sudo apt-get install libsamplerate0-dev
+

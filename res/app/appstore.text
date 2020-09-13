@@ -1,0 +1,53 @@
+======================================
+====  Building Grace for Appstore ====
+======================================
+
+Building for the appstore assumes that Sndib, OscPak and Juce have all
+been built and their libs are in the normal places (cm/lib/ cm/sndlib/lib)
+
+1. premake4 --file=appstore.lua
+2. open ../Grace.xcworkspace        // must open this or entitlements wont work!
+
+XCODE DEVELOPER BUILD
+
+[General]
+        Identity
+                Application category    Music
+                Bundle Identifier       org.commonmusic.grace.mac
+                Version                 3.9.0
+                Build                   nnnn
+                Signing                 Mac App Store
+                Team                    Heinrich Taube
+        Deployment
+                Deployment Target       10.6
+                Main Interface          -blank-
+[Capabilities]
+        App Sandbox     On
+            Incoming Connections        On
+            Outgoing Connections        On
+            Microphone                  On
+            User Selected File          Read/Write
+            Music Folder                Read/Write
+
+
+[Build Settings]
+       Build Options
+             Debug Information Format   DWARF with dSYM File
+
+       Code Signing
+             Code Signing Entitlements  cm/res/app/Grace.entitlements
+             Code Signing Identity      Mac Developer
+             Provisioning Profile       Mac Team Provisioning Profile: org.commonmusic.grace.mac
+
+XCODE RELEASE BUILD 
+
+1. Make sure you remake Juce and OscPack as release:
+        cd cm
+        premake4 cleanall
+        premake4 --with-oscpack
+        make config=release
+
+2. Set provisioning profile to the distribution profile:
+   [Build Settings]
+          Code Signing                  Mac Developer
+          Provisioning Profile          Grace Distribution Profile
